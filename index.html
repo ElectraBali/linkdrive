@@ -1466,7 +1466,11 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
 }
 }
 @media (max-width: 480px) {
-
+  .sort-chip {           /* class kapsul urutkan */
+    padding: 10px 14px!important;  /* samakan */
+    font-size: 12px!important;     /* samakan */
+    border-radius: 12px!important; /* samakan */
+  }
 /* Gap antar tombol */
 .header-right {
   display: flex;
@@ -1478,9 +1482,9 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
 .header-small-btn,
 .theme-toggle,
 .pill-badge {
-  padding: 5px 10px;     /* ukuran seragam */
-  font-size: 10.5px;     /* teks seragam */
-  border-radius: 9px;    /* curve seragam */
+  padding: 7px 9px;      /* 🔼 tinggi kapsul naik → 9px atas-bawah */
+    font-size: 11px;        /* teks tetap proporsional */
+    border-radius: 12px;     /* curve seragam */
   min-width: auto;
 }
 }
@@ -1667,7 +1671,12 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
         <button class="header-small-btn" id="homeBtn">🏠 Home</button>
         <button class="header-small-btn" id="playlistBtn">📁 Playlist</button>
         <button class="header-small-btn" id="historyBtn">🕒 History</button>
+        <button class="theme-toggle" id="themeToggle">
+          <span id="themeIcon">🌙</span>
+          <span id="themeLabel">Dark</span>
+        </button>
         <div class="pill-badge">
+
           <span class="pill-dot"></span>
           <span id="clockText">
             <span id="clockHours">--</span>
@@ -1675,10 +1684,7 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
             <span id="clockMinutes">--</span>
           </span>
         </div>
-        <button class="theme-toggle" id="themeToggle">
-          <span id="themeIcon">🌙</span>
-          <span id="themeLabel">Dark</span>
-        </button>
+      
       </div>
     </div>
 
