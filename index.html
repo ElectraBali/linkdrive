@@ -383,6 +383,23 @@ body.theme-light {
       display: flex;
       gap: 14px;
     }
+    @media (max-width: 480px) {
+  .hero-actions {
+    gap: 11px;     /* sesuaikan jaraknya */
+  }
+}
+@media (max-width: 480px) {
+  .download-btn,
+  .playlist-btn {
+    font-size: 10px !important;   /* 🔥 naikkan font */
+               /* lebih tebal */
+  }
+}
+@media (max-width: 480px) {
+  .player-title {
+    font-size: 14px!important;
+  }
+}
 
     /* ====== HERO BUTTONS ====== */
     .hero-btn {
@@ -1660,7 +1677,7 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
 .card {
   padding: 6px !important;
   gap: 4px !important;
-  border-radius: 8px !important;
+  border-radius: 11px !important;
 }
 
 .card-main {
@@ -1813,8 +1830,9 @@ body.theme-light .hero-dot.active {
               </svg>
             </button>
             <button id="playerCloseBtn" class="player-close-btn">
-              ✕ Tutup
+              <span class="home-icon">🏠</span> Home
             </button>
+            
           </div>
         </div>
         <div class="player-body">
