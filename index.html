@@ -696,6 +696,27 @@ body.theme-light {
     .player-section.show {
       display: block;
     }
+    .player-size {
+  display: none !important;
+}
+@media (max-width: 480px) {
+
+.player-extra {
+  flex-direction: row !important;
+  align-items: center;
+}
+
+/* Rapatkan tombol Download + Playlist */
+.player-extra-row {
+  margin-right: 6px; /* 🔥 kasih jarak kecil */
+}
+
+/* Playlist geser ke kanan sedikit */
+#playerPlaylistMainBtn {
+  margin-left: -6px;
+   /* 👉 geser dikit, gak sampai pojok */
+}
+}
 
     .player-card {
       background: transparent;
@@ -981,6 +1002,12 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
     body.theme-light .download-btn {
       background: #ffffff;
     }
+    @media (max-width: 480px) {
+  .download-btn {
+    padding-top: 5px!important;        /* 🔥 naik dari default */
+    padding-bottom: 6px!important;
+  }
+}
 
     /* PLAYLIST BUTTON UTAMA DI BAWAH DOWNLOAD */
     .playlist-btn {
@@ -1610,11 +1637,40 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
 
   /* TOMBOL PLAYLIST SUPER MINI */
   .playlist-btn {
-    padding: 4px 8px;
+    padding: 3px 8px!important;
     gap: 3px;
     font-size: 9px;
-    border-radius: 5px;
+    border-radius: 5px!important;
   }
+  @media (max-width: 480px) {
+
+/* Bingkai thumbnail lebih gepeng */
+.thumb-wrapper {
+  height: 90px !important;    /* 👉 kecilin bingkai */
+}
+
+/* Thumbnail ikut ngepas */
+.thumb {
+  height: 100px !important;
+  object-fit: cover;
+}
+
+/* Card juga dipendekin */
+.card {
+  padding: 6px !important;
+  gap: 4px !important;
+}
+
+.card-main {
+  padding: 2px !important;
+  gap: 2px !important;
+}
+
+.card-title {
+  font-size: 12px !important;     /* biar proporsional */
+  line-height: 1.25;
+}
+}
 
   .playlist-btn svg {
     width: 14px;
