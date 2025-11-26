@@ -1273,6 +1273,16 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
       justify-content: center;
       font-size: 9px;
     }
+    @media (max-width: 480px) {
+  .sort-label {
+    padding-top: 6px;       /* hanya tinggi yang diubah */
+    padding-bottom: 6px;    /* hanya tinggi */
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
 
     .card-main {
       display: flex;
@@ -1467,7 +1477,7 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
 }
 @media (max-width: 480px) {
   .sort-chip {           /* class kapsul urutkan */
-    padding: 10px 14px!important;  /* samakan */
+    padding: 20px 14px!important;  /* samakan */
     font-size: 12px!important;     /* samakan */
     border-radius: 12px!important; /* samakan */
   }
@@ -1482,7 +1492,7 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
 .header-small-btn,
 .theme-toggle,
 .pill-badge {
-  padding: 7px 9px;      /* 🔼 tinggi kapsul naik → 9px atas-bawah */
+  padding: 9px 9px;      /* 🔼 tinggi kapsul naik → 9px atas-bawah */
     font-size: 11px;        /* teks tetap proporsional */
     border-radius: 12px;     /* curve seragam */
   min-width: auto;
@@ -1501,7 +1511,7 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
 /* HP kecil – gepengin hero carousel */
 @media (max-width: 400px) {
   .hero-section {
-    height: 220px;        /* <— silakan mainin: 170–210 */
+    height: 240px;        /* <— silakan mainin: 170–210 */
     border-radius: 18px;
     margin-bottom: 16px;
   }
