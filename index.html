@@ -1432,29 +1432,58 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
   text-align: left;               /* atau center kalau mau */
 }
 /* ===== HEADER SUPER KECIL (≤ 400px) ===== */
-/* Navbar compact size khusus HP kecil (≤480px) */
 @media (max-width: 480px) {
 
+/* Atur jarak antar tombol */
 .header-right {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;          /* jarak sedikit lebih rapat */
+  gap: 8px;
 }
 
-.header-small-btn,
-.theme-toggle {
-  padding: 5px 10px;   /* sedikit lebih kecil dari 6x12 */
-  font-size: 10.5px;   /* turun dikit dari 11px */
-  border-radius: 9px;  /* biar matching dengan ukuran baru */
+/* Ukuran tombol navigasi umum */
+.header-small-btn {
+  padding: 5px 10px;
+  font-size: 10.5px;
+  border-radius: 9px;
   min-width: auto;
 }
 
+/* Toggle diperkecil sedikit */
+.theme-toggle {
+  padding: 4px 8px;        /* turun dari 5x10 → 4x8 */
+  font-size: 9.5px;        /* lebih kecil sedikit */
+  border-radius: 8px;      /* biar lebih mungil */
+  min-width: auto;
+}
+
+/* Jam (pill-badge) tetap normal */
 .pill-badge {
   padding: 5px 10px;
   font-size: 10.5px;
   border-radius: 9px;
 }
 }
+@media (max-width: 480px) {
+
+/* Gap antar tombol */
+.header-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Semua tombol navigasi + toggle samakan ukuran */
+.header-small-btn,
+.theme-toggle,
+.pill-badge {
+  padding: 5px 10px;     /* ukuran seragam */
+  font-size: 10.5px;     /* teks seragam */
+  border-radius: 9px;    /* curve seragam */
+  min-width: auto;
+}
+}
+
 
 
 
@@ -1467,7 +1496,7 @@ text-shadow: 0 2px 5px rgba(0,0,0,0.25);
 /* HP kecil – gepengin hero carousel */
 @media (max-width: 400px) {
   .hero-section {
-    height: 210px;        /* <— silakan mainin: 170–210 */
+    height: 220px;        /* <— silakan mainin: 170–210 */
     border-radius: 18px;
     margin-bottom: 16px;
   }
