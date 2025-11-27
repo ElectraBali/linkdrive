@@ -268,6 +268,7 @@
         height 0.35s ease,
         opacity 0.25s ease,
         margin-bottom 0.35s ease;
+      touch-action: pan-y; /* biar swipe horizontal lebih halus */
     }
 
     .hero-section.is-hidden {
@@ -2295,6 +2296,33 @@
        HERO CAROUSEL LOGIC
        ========================================= */
     let carouselInterval;
+    let carouselResumeTimeout; // 🔥 jeda sebelum auto jalan lagi
+    let heroSlideCount = 0;     // jumlah slide aktif
+    let currentSlideIndex = 0;  // index slide yang sedang tampil
+
+    // ====== CAROUSEL AUTO DELAY UTILS ======
+    function clearCarouselTimers() {
+      if (carouselInterval) {
+        clearInterval(carouselInterval);
+        carouselInterval = null;
+      }
+      if (carouselResumeTimeout) {
+        clearTimeout(carouselResumeTimeout);
+        carouselResumeTimeout = null;
+      }
+    }
+
+    function pauseAutoCarousel() {
+      // stop auto-slide dulu
+      clearCarouselTimers();
+      if (heroSlideCount <= 1) return;
+
+      // start lagi setelah 15 detik (bisa kamu ganti)
+      carouselResumeTimeout = setTimeout(() => {
+        startCarouselInterval(heroSlideCount);
+      }, 15000);
+    }
+    // =======================================
 
     // 🔀 acak semua video dalam folder label/artis
     function shuffleFolder(kind, value) {
@@ -2361,7 +2389,9 @@
 
       if (!slides.length) {
         heroCarousel.classList.add("is-hidden");
-        if (carouselInterval) clearInterval(carouselInterval);
+        clearCarouselTimers(); // 🔥 stop semua timer kalau tidak ada slide
+        heroSlideCount = 0;
+        currentSlideIndex = 0;
         return;
       }
 
@@ -2419,23 +2449,30 @@
               <h2 class="hero-title">${titleText}</h2>
               <div class="hero-desc">${descText}</div>
               <div class="hero-actions">
-                <button class="hero-btn hero-btn-primary" onclick="openPlayerInline(${vid.id}); setPlayerMode('wide')">
-                  ▶ Putar video ini
-                </button>
+               <button class="hero-btn hero-btn-primary" onclick="openPlayerInline(${vid.id})">
+                  ▶ Tonton lagi
+               </button>
                 ${secondaryBtn}
               </div>
             </div>
           </div>
         `;
 
-        indicatorsHTML += `<div class="hero-dot${activeClass}" onclick="switchSlide(${index})"></div>`;
+        // 🔥 ganti dari switchSlide(...) ke userSwitchSlide(...)
+        indicatorsHTML += `<div class="hero-dot${activeClass}" onclick="userSwitchSlide(${index})"></div>`;
       });
 
       indicatorsHTML += `</div>`;
       heroCarousel.innerHTML = slidesHTML + indicatorsHTML;
 
       heroCarousel.classList.remove("is-hidden");
-      startCarouselInterval(slides.length);
+
+      // update jumlah slide & index aktif
+      const domSlides = heroCarousel.querySelectorAll(".hero-slide");
+      heroSlideCount = domSlides.length;
+      currentSlideIndex = 0;
+
+      startCarouselInterval(heroSlideCount);
     }
 
     function goToPlaylistFromCarousel() {
@@ -2505,42 +2542,130 @@
       }
     }
 
-    function switchSlide(index) {
+    // 🔁 auto slide, pakai index global
+    function startCarouselInterval(count) {
+      clearCarouselTimers(); // 🔥 pastikan nggak dobel interval
+      if (count <= 1) return; 
+
+      carouselInterval = setInterval(() => {
+        if (heroSlideCount <= 1) return;
+        const nextIndex = (currentSlideIndex + 1) % heroSlideCount;
+        switchSlide(nextIndex, "next");
+      }, 7000); 
+    }
+
+    // switch slide (dipakai auto & user)
+    function switchSlide(targetIndex, direction) {
       const slides = document.querySelectorAll(".hero-slide");
       const dots = document.querySelectorAll(".hero-dot");
       
-      if(!slides.length) return;
+      if (!slides.length) return;
+      if (targetIndex < 0 || targetIndex >= slides.length) return;
 
-      let currentActiveIndex = -1;
+      // cari index aktif saat ini
+      let currentIndex = currentSlideIndex;
       slides.forEach((slide, i) => {
-        if(slide.classList.contains("active")) {
-          currentActiveIndex = i;
+        if (slide.classList.contains("active")) {
+          currentIndex = i;
         }
       });
 
-      slides.forEach(slide => {
-        slide.classList.remove("active");
-        slide.classList.remove("prev");
-      });
-      dots.forEach(dot => dot.classList.remove("active"));
+      if (targetIndex === currentIndex) return;
 
-      slides[index].classList.add("active");
-      dots[index].classList.add("active");
-
-      if(currentActiveIndex !== -1 && currentActiveIndex !== index) {
-        slides[currentActiveIndex].classList.add("prev");
+      // tentukan arah default kalau belum dikasih
+      if (!direction) {
+        direction = targetIndex > currentIndex ? "next" : "prev";
       }
+
+      // update dot
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("active", i === targetIndex);
+      });
+
+      const currentSlide = slides[currentIndex];
+      const nextSlide = slides[targetIndex];
+
+      // bersihin class prev dulu
+      slides.forEach(slide => slide.classList.remove("prev"));
+
+      if (direction === "next") {
+        // current keluar ke kiri
+        currentSlide.classList.add("prev");
+        currentSlide.classList.remove("active");
+
+        // next dari kanan (default 100%) masuk ke tengah (0)
+        nextSlide.classList.add("active");
+      } else {
+        // arah prev: next datang dari kiri
+        nextSlide.classList.add("prev"); // posisi -100%
+        // force reflow biar transisi kebaca
+        void nextSlide.offsetWidth;
+
+        // current keluar ke kanan (balik ke default 100%)
+        currentSlide.classList.remove("active");
+
+        // lalu next aktif dan lepas kelas prev => jalan dari -100% ke 0
+        nextSlide.classList.add("active");
+        nextSlide.classList.remove("prev");
+      }
+
+      currentSlideIndex = targetIndex;
+      // ❌ jangan restart interval di sini, biar dikontrol pause/resume
     }
 
-    function startCarouselInterval(count) {
-      if (carouselInterval) clearInterval(carouselInterval);
-      if (count <= 1) return; 
+    // dipanggil kalau user klik dot
+    function userSwitchSlide(targetIndex) {
+      switchSlide(targetIndex);
+      pauseAutoCarousel(); // 🔥 jeda auto-slide setelah interaksi user
+    }
 
-      let currentIndex = 0;
-      carouselInterval = setInterval(() => {
-        currentIndex = (currentIndex + 1) % count;
-        switchSlide(currentIndex);
-      }, 7000); 
+    // ====== SWIPE GESTURE HERO CAROUSEL ======
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isTouchingCarousel = false;
+
+    function handleCarouselTouchStart(e) {
+      if (!heroCarousel) return;
+      isTouchingCarousel = true;
+      const point = e.touches ? e.touches[0] : e;
+      touchStartX = point.clientX;
+      touchEndX = point.clientX;
+    }
+
+    function handleCarouselTouchMove(e) {
+      if (!isTouchingCarousel) return;
+      const point = e.touches ? e.touches[0] : e;
+      touchEndX = point.clientX;
+    }
+
+    function handleCarouselTouchEnd() {
+      if (!isTouchingCarousel) return;
+      const deltaX = touchEndX - touchStartX;
+      const threshold = 40; // minimal jarak swipe
+
+      if (Math.abs(deltaX) > threshold && heroSlideCount > 1) {
+        if (deltaX < 0) {
+          // swipe kiri => geser konten ke kiri (slide next)
+          const nextIndex = (currentSlideIndex + 1) % heroSlideCount;
+          switchSlide(nextIndex, "next");
+        } else {
+          // swipe kanan => geser konten ke kanan (slide prev)
+          const prevIndex = (currentSlideIndex - 1 + heroSlideCount) % heroSlideCount;
+          switchSlide(prevIndex, "prev");
+        }
+        // 🔥 user geser manual → tunda auto-slide dulu
+        pauseAutoCarousel();
+      }
+
+      isTouchingCarousel = false;
+      touchStartX = 0;
+      touchEndX = 0;
+    }
+
+    if (heroCarousel) {
+      heroCarousel.addEventListener("touchstart", handleCarouselTouchStart, { passive: true });
+      heroCarousel.addEventListener("touchmove", handleCarouselTouchMove, { passive: true });
+      heroCarousel.addEventListener("touchend", handleCarouselTouchEnd);
     }
 
     function renderFilters() {
